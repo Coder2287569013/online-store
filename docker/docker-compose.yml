@@ -10,4 +10,4 @@ services:
       - ..:/online-store  
     environment:
       - DEBUG=False
-    command: /runservers.sh
+    command: /entrypoint.sh

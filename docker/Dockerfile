@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000 8080
 
-COPY docker/runservers.sh /runservers.sh
-RUN chmod +x /runservers.sh
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-CMD ["/runservers.sh"]
+CMD ["/entrypoint.sh"]
