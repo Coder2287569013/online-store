@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Product Details</title>
+{% endblock %}
+
+{% block content %}
+<h2>{{ product.title }}</h2>
+<p>{{ product.description }}</p>
+<p>Price: {{ product.price }}</p>
+<p>{{ product.country.name }}, {{ product.region.name }}, {{ product.city.name }}</p>
+
+{% for image in product.images.all %}
+    <img src="{{ image.image.url }}" alt="{{ product.title }}">
+{% endfor %}
+{% endblock %}
