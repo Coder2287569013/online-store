@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 <title>Search Results</title>
@@ -7,10 +8,12 @@
 {% block content %}
 <h2>Search Results for "{{ query }}"</h2>
 {% for product in products %}
+    {% if product.unavailable == False %}
     <div>
-        <h3>{{ product.title }}</h3>
+        <a href="{% url 'product_view' product.id %}">{{ product.title }}</a>
         <p>{{ product.description }}</p>
         <p>Price: {{ product.price }}</p>
     </div>
+    {% endif %}
 {% endfor %}
 {% endblock %}

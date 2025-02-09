@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 <title>Product Details</title>
@@ -6,9 +7,19 @@
 
 {% block content %}
 <h2>{{ product.title }}</h2>
+<p style="display: inline-block;">
+    <img src="{{ product.seller.avatar.url }}" alt="{{ product.seller.username }}" width="64px" height="64px">
+    {{ product.seller.username }}
+</p>
 <p>{{ product.description }}</p>
 <p>Price: {{ product.price }}</p>
 <p>{{ product.country.name }}, {{ product.region.name }}, {{ product.city.name }}</p>
+<p>Rating: {{rating}}</p>
+<a href="{% url 'review' product.seller.id product.id %}">Create Review</a>
+{% if request.user and product.seller and request.user != product.seller %}
+    <a href="{% url 'chat' product.id request.user.id %}">Start the chat with the seller</a>
+{% endif %}
+<a href="{% url 'save_product' product.id %}">Add Product to Saved</a>
 
 {% for image in product.images.all %}
     <img src="{{ image.image.url }}" alt="{{ product.title }}">

@@ -25,9 +25,15 @@ class Product(models.Model):
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    unavailable = models.BooleanField(default=True)    
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        permissions = [
+            ('can_check_products', 'Can check products'),
+        ]
 
 
 class ProductImage(models.Model):
@@ -36,3 +42,33 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return self.product.title
+
+
+class ChatRoom(models.Model):
+    seller = models.ForeignKey('auth_sys.CustomUser', on_delete=models.CASCADE, related_name='seller_room')
+    buyer = models.ForeignKey('auth_sys.CustomUser', on_delete=models.CASCADE, related_name='buyer_room')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('seller', 'buyer', 'product')
+
+    def __str__(self):
+        return f'{self.seller.username} - {self.buyer.username} - {self.product.title}'
+
+class Message(models.Model):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+    author = models.ForeignKey('auth_sys.CustomUser', on_delete=models.CASCADE)
+    text = models.TextField()
+
+    def __str__(self):
+        return f'{self.author.username} - {self.room.product.title}'
+
+class SavedProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey('auth_sys.CustomUser', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('product', 'user') 
+
+    def __str__(self):
+        return f"{self.user.username} saved {self.product.name}"
