@@ -5,9 +5,10 @@ from .models import CustomUser
 
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
-    if not instance.is_superuser and created:
-        customer_group, _ = Group.objects.get_or_create(name='Customer')
-        instance.groups.add(customer_group)
-    else:
-        admin_group, _ = Group.objects.get_or_create(name='Administrator')
-        instance.groups.add(admin_group)
+    if created:
+        if instance.is_superuser:
+            admin_group, _ = Group.objects.get_or_create(name='Administrator')
+            admin_group.user_set.add(instance)
+        else:
+            customer_group, _ = Group.objects.get_or_create(name='Customer')
+            customer_group.user_set.add(instance)

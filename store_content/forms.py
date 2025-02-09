@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, ProductImage, Category
+from .models import Product, ProductImage, Category, Message
 from cities_light.models import City
 
 class MultipleImageInput(forms.ClearableFileInput):
@@ -49,3 +49,13 @@ class ProductForm(forms.ModelForm):
                 pass
         elif self.instance.pk and self.instance.region:
             self.fields['city'].queryset = City.objects.filter(region=self.instance.region).order_by('name')
+
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'form-control'})
+        }
+

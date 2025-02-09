@@ -4,6 +4,7 @@ document.getElementById('search-input').addEventListener('input', function () {
         fetch(`/search/suggestions/?q=${query}`)
             .then(response => response.json())
             .then(data => {
+                
                 const suggestions = document.getElementById('suggestions');
                 suggestions.innerHTML = '';
                 data.forEach(suggestion => {

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Profile: {{ user.username }}</title>
+{% endblock %}
+
+{% block content %}
+<h2>Profile:</h2>
+<img src="{{ user.avatar.url }}" alt="{{ user.username }}" width="128px" height="128px">
+<p>
+    Username: {{ user.username }} <br>
+    First name: {{ user.first_name }} <br>
+    Last name: {{ user.last_name }} <br>
+    Date joined: {{ user.date_joined }} <br>
+    Rating: {{ rating }}
+</p>
+<h2>Reviews:</h2>
+<ul>
+    {% for review in reviews %}
+        <li>
+            {{ review.date }} <br>
+            Rating: {{ review.rate }} <br>
+            {{ review.text }}
+        </li>
+    {% endfor %}
+</ul>
+<h2>Products:</h2>
+<ul>
+    {% for product in products %}
+        <li>
+            <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}"><br> 
+            <a href="{% url 'product_view' product.id %}">
+                {{ product.title }}, {{ product.price }} CAD<br>
+                {{ product.city }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

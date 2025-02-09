@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('auth_sys.urls')),
     path('', include('store_content.urls')),
+    path('moderators/', include('moderator_panel.urls')),
 ]

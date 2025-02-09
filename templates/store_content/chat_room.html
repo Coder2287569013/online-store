@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Chat</title>
+{% endblock %}
+
+{% block content %}
+<h2>Chat with {{ chat_room.seller.username }}</h2>
+
+<div id="chat-box">
+    {% for message in chat_room.messages.all %}
+        <p><b>{{ message.author.username }}</b>: {{ message.text }}</p>
+    {% endfor %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send</button>
+</form>
+
+<script>
+    const productId = "{{ chat_room.product.id }}";
+    const buyerId = "{{ chat_room.buyer.id }}";
+    const socket = new WebSocket(`ws://${window.location.host}/ws/chat/${productId}/${buyerId}/`);
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const chatBox = document.getElementById("chat-box");
+        chatBox.innerHTML += `<p><b>${data.author}</b>: ${data.message}</p>`;
+    };
+
+    socket.onclose = function(event) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector("form").onsubmit = function(event) {
+        event.preventDefault();
+        const input = document.querySelector("input[name='text']");
+        socket.send(JSON.stringify({ 'message': input.value }));
+        input.value = "";
+    };
+</script>
+{% endblock %}
