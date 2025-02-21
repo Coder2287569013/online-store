@@ -26,7 +26,7 @@ Follow these steps to run Simplestock on your local machine:
 2. Apply migrations:  
    ```python manage.py makemigrations; python manage.py migrate```  
    After running migrations, modify the database:  
-   In the `cities-light` table, delete all entries where `country_id != 38`
+   In the `cities-light` tables, delete all entries where `country_id != 38`
 
 3. Run the project using one of the following methods:
 
