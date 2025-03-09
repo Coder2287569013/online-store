@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Chats - {{ request.user.username }}</title>
+<link rel="stylesheet" href="{% static 'regular/css/userProducts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="folders">
+        <button class="folder selling" onclick="filterChats('Selling')">Selling</button>
+        <button class="folder buying" onclick="filterChats('Buying')">Buying</button>
+    </div>
+    <div class="chat-list" id="chat-list">
+        {% for chat in chats %}
+            <div class="chat-card" data-status="{% if request.user == chat.seller %}Selling{% else %}Buying{% endif %}">
+                <a href="{% url 'chat' chat.product.id chat.buyer.id  %}" class="chat-card-link">
+                    <div class="product-image-container">
+                        {% with chat.product.images.all|first as first_image %}
+                            {% if first_image %}
+                                <img src="{{ first_image.image.url }}" alt="{{ chat.product.title }}" class="product-image">
+                            {% else %}
+                                <img src="default-image.jpg" alt="No Image" class="product-image">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-title">Chat about {{ chat.product.title }} with {% if request.user == chat.seller %} {{ chat.buyer.username }} {% else %} {{ chat.seller.username }} {% endif %}</div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function filterChats(status) {
+        const chats = document.querySelectorAll('.chat-card');
+        chats.forEach(chat => {
+            if (chat.getAttribute('data-status') === status) {
+                chat.style.display = 'flex';
+            } else {
+                chat.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

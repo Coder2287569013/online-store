@@ -15,6 +15,7 @@
     Date joined: {{ user.date_joined }} <br>
     Rating: {{ rating }}
 </p>
+<a href="{% url 'customize_profile' user.id %}">Customize Profile</a>
 <h2>Reviews:</h2>
 <ul>
     {% for review in reviews %}
@@ -34,6 +35,24 @@
                 {{ product.title }}, {{ product.price }} CAD<br>
                 {{ product.city }}
             </a>
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Chats:</h2>
+<ul>
+    {% for chat in chats %}
+        <li>
+            <a href="{% url 'chat' chat.product.id chat.buyer.id %}">Chat with {{ chat.buyer.username }} about {{ chat.product.title }}</a>
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Changes Requested:</h2>
+<ul>
+    {% for change in changes %}
+        <li>
+            {{ change.product.title }} - {{change.message}}
         </li>
     {% endfor %}
 </ul>

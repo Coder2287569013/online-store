@@ -1,0 +1,222 @@
+body {
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 300px;
+    background: rgb(10, 10, 10);
+    padding: 20px;
+    height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    top: 100px;
+    border-top: 2px solid black;
+}
+
+.search-engine {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#search-form {
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+#search-input {
+    flex: 1;
+    padding: 10px;
+    background: rgb(30, 30, 30);
+    color: white;
+    border: 1px solid #555;
+    font-size: 16px;
+    outline: none;
+}
+
+#search-form button {
+    background: rgb(219, 219, 219);
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#search-form button:hover {
+    background: black;
+    color: white;
+}
+
+#suggestions {
+    position: absolute;
+    top: calc(100%);
+    left: 0;
+    width: 99.5%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+#suggestions div {
+    padding: 10px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+#suggestions div a {
+    color: black;
+    text-decoration: none;
+}
+
+#suggestions div:hover {
+    background: #f0f0f0;
+}
+
+#suggestions.show {
+    display: block;
+}
+
+.categories {
+    width: 100%;
+}
+
+.categories h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.categories ul {
+    list-style: none;
+    padding: 0;
+}
+
+.categories ul li {
+    text-align: center;
+    margin: 5px 0;
+}
+
+.categories ul li a {
+    text-decoration: none;
+    color: white;
+    padding: 8px 12px;
+    display: block;
+    transition: 0.3s;
+    background: rgb(30, 30, 30);
+}
+
+.categories ul li a:hover {
+    background: rgb(50, 50, 50);
+}
+
+.content {
+    position: absolute;
+    top: 100px;
+    left: 330px;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
+    overflow-y: auto; 
+    height: calc(100vh - 150px); 
+}
+
+.product-card {
+    display: flex;
+    background-color: #222;
+    margin-bottom: 10px;
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+}
+
+.product-card-link {
+    display: flex;
+    flex: 1;
+    text-decoration: none;
+    color: white;
+}
+
+.product-image-container {
+    width: 25%;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+.product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px 20px;
+    color: white;
+}
+
+.product-title {
+    font-size: 24px;
+}
+
+.product-location {
+    font-size: 14px;
+    color: #bbb;
+    margin-top: auto;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    top: 15px;
+    right: 10px;
+}
+
+.save-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 20px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    padding: 10px;
+}
+
+.pagination-link {
+    color: rgb(214, 208, 208);
+    background-color: #1a1a1a;
+    padding: 8px 15px;
+    margin: 0 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-link:hover {
+    background-color: #333;
+}
+
+.current-page {
+    color: rgb(214, 208, 208);
+    padding: 8px 15px;
+    margin: 0 10px;
+}

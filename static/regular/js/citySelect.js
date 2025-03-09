@@ -3,7 +3,7 @@ document.getElementById('region_id').addEventListener('change', function () {
     const citySelect = document.getElementById('id_city');
     citySelect.innerHTML = '<option value="">--- Select a city ---</option>';
     if (regionId) {
-        fetch(`cities/?region_id=${regionId}`)
+        fetch(`../create/cities/?region_id=${regionId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to fetch cities');

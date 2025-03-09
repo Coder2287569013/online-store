@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    <title>Product List</title>
+    <link rel="stylesheet" href="{% static 'regular/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'regular/css/productList.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Product List</h1>
+    
+    <div class="sidebar">
+        <div class="search-engine">
+            <form action="{% url 'search' %}" method="get" id="search-form">
+                <input type="text" name="q" id="search-input" placeholder="Search for products...">
+                <button type="submit">Search</button>
+                <div id="suggestions"></div>
+            </form>
+        </div>
+        <script src="{% static 'regular/js/searchEngine.js' %}"></script>
+
+        <div class="categories">
+            <h2>Categories</h2>
+            <ul>
+                <li><a href="{% url 'all_products' %}">All Products</a></li>
+                {% for category in categories %}
+                    <li>
+                        <a href="{% url 'product_by_category' category.id %}"
+                           {% if category.id|stringformat:"s" == selected_category|stringformat:"s" %} style="font-weight: bold;" {% endif %}>
+                            {{ category.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="content">
+        {% block list %}
+        <h1>Product List</h1>
+        {% endblock %}
+        
+        {% for product in products %}
+            <div class="product-card">
+                <a href="{% url 'product_view' product.id %}" class="product-card-link">
+                    <div class="product-image-container">
+                        {% with product.images.all|first as first_image %}
+                            {% if first_image %}
+                                <img src="{{ first_image.image.url }}" alt="{{ product.title }}" class="product-image">
+                            {% else %}
+                                <img src="default-image.jpg" alt="No Image" class="product-image">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+            
+                    <div class="product-info">
+                        <div class="product-title">{{ product.title }}</div>
+                        <div class="product-location">{{ product.city }}</div>
+                        <div class="product-price">{{ product.price }} CAD</div>
+                    </div>
+                </a>
+                <a href="{% url 'save_product' product.id %}" class="save-button">
+                    {% if product.id in saved %}
+                        ❤️
+                    {% else %}
+                        🤍
+                    {% endif %}
+                </a>
+            </div>
+        {% empty %}
+            <p>No products found in this category.</p>
+        {% endfor %}
+    
+        {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="pagination-link">&laquo; First</a>
+                <span class="current-page">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">Previous</a>
+            {% endif %}
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">Next</a>
+                <span class="current-page">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Last &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

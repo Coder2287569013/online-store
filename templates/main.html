@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'regular/css/mainPage.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div id="background-text">
+        <div id="main-text">SIMPLESTOCK</div>
+        <div id="sub-text">FIND ANYTHING YOU NEED</div>
+    </div>
+
+    <div class="search-engine">
+        <form action="{% url 'search' %}" method="get" id="search-form">
+            <input type="text" name="q" id="search-input" placeholder="Search for products...">
+            <button type="submit">Search</button>
+            <div id="suggestions"></div>
+        </form>
+    </div>
+
+    <script src="{% static 'regular/js/searchEngine.js' %}"></script>
+    <script>
+        let moveX = 0, moveY = 0;
+
+        document.addEventListener("mousemove", (e) => {
+            let { innerWidth, innerHeight } = window;
+            moveX = (e.clientX / innerWidth) * 25;
+            moveY = (e.clientY / innerHeight) * 25;
+        });
+
+        function updateBackground() {
+            document.body.style.backgroundPosition = `${38 + moveX}% ${15 + moveY}%`;
+            requestAnimationFrame(updateBackground);
+        }
+
+        updateBackground();
+    </script>
+{% endblock %}

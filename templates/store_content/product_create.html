@@ -3,14 +3,50 @@
 
 {% block title %}
 <title>Create Product</title>
+<link rel="stylesheet" href="{% static 'regular/css/form.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>Create Product</h2>
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" style="
+position: relative !important;
+top: auto !important;
+left: auto !important;
+transform: none !important;
+margin: 20px auto !important;
+width: 100% !important;
+max-width: 100% !important;
+">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Product</button>
+    
+    {% for field in form %}
+        {% if field.name != 'images' and field.name != 'delete_images' %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+    
+    <h3>Current Images</h3>
+    <div class="product-images">
+        {% for img in product.images.all %}
+            <div style="display: inline-block; margin: 10px;">
+                <img src="{{ img.image.url }}" alt="Product Image" width="100">
+                <label>
+                    Delete
+                    <input type="checkbox" name="delete_images" value="{{ img.id }}" style="margin-left: 30px;">
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h3>Upload New Images</h3>
+    <input type="file" name="images" multiple>
+
+    <button type="submit">Submit</button>
 </form>
 <script src="{% static 'regular/js/citySelect.js' %}"></script>
 {% endblock %}

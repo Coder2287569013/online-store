@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Change Requests - {{ request.user.username }}</title>
+<link rel="stylesheet" href="{% static 'regular/css/userProducts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="product-list" id="product-list">
+        {% for request in requests %}
+            <div class="product-card">
+                <div class="product-card-link">
+                    <div class="product-image-container">
+                        {% with request.product.images.all|first as first_image %}
+                            {% if first_image %}
+                                <img src="{{ first_image.image.url }}" alt="{{ request.product.title }}" class="product-image">
+                            {% else %}
+                                <img src="default-image.jpg" alt="No Image" class="product-image">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">Changes requested regarding {{ request.product.title }}</div>
+                        <p>{{ request.message }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

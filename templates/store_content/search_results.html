@@ -1,19 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'store_content/product_list.html' %}
 {% load static %}
 
 {% block title %}
-<title>Search Results</title>
+<title>Search Results for "{{ query }}"</title>
+<link rel="stylesheet" href="{% static 'regular/css/productList.css' %}">
 {% endblock %}
 
-{% block content %}
-<h2>Search Results for "{{ query }}"</h2>
-{% for product in products %}
-    {% if product.unavailable == False %}
-    <div>
-        <a href="{% url 'product_view' product.id %}">{{ product.title }}</a>
-        <p>{{ product.description }}</p>
-        <p>Price: {{ product.price }}</p>
-    </div>
-    {% endif %}
-{% endfor %}
+{% block list %}
+<h1>Search Results for "{{ query }}"</h1>
 {% endblock %}

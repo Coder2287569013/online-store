@@ -53,7 +53,7 @@ class ChatRoom(models.Model):
         unique_together = ('seller', 'buyer', 'product')
 
     def __str__(self):
-        return f'{self.seller.username} - {self.buyer.username} - {self.product.title}'
+        return f'Chat with {self.buyer.username} about {self.product.title}'
 
 class Message(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
@@ -65,10 +65,10 @@ class Message(models.Model):
 
 class SavedProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user = models.ForeignKey('auth_sys.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth_sys.CustomUser', on_delete=models.CASCADE, related_name="saved")
 
     class Meta:
         unique_together = ('product', 'user') 
 
     def __str__(self):
-        return f"{self.user.username} saved {self.product.name}"
+        return f"{self.user.username} saved {self.product.title}"

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Products - {{ request.user.username }}</title>
+<link rel="stylesheet" href="{% static 'regular/css/userProducts.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="folders">
+        <button class="folder available" onclick="filterProducts('available')">{{ available_count }} Available Product(-s)</button>
+        <button class="folder unavailable" onclick="filterProducts('unavailable')">{{ unavailable_count }} Unavailable Product(-s)</button>
+    </div>
+    
+    <div class="product-list" id="product-list">
+        {% for product in products %}
+            <div class="product-card" data-status="{% if product.unavailable %}unavailable{% else %}available{% endif %}">
+                <a href="{% url 'product_view' product.id %}" class="product-card-link">
+                    <div class="product-image-container">
+                        {% with product.images.all|first as first_image %}
+                            {% if first_image %}
+                                <img src="{{ first_image.image.url }}" alt="{{ product.title }}" class="product-image">
+                            {% else %}
+                                <img src="default-image.jpg" alt="No Image" class="product-image">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">{{ product.title }}</div>
+                        <div class="product-location">{{ product.city }}</div>
+                        <div class="product-price">{{ product.price }} CAD</div>
+                    </div>
+                </a>
+                <div class="product-actions">
+                    <a href="{% url 'product_update' product.id %}" class="edit-button">✏️</a>
+                    <a href="{% url 'product_delete' product.id %}" class="delete-button">🗑️</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function filterProducts(status) {
+        const products = document.querySelectorAll('.product-card');
+        products.forEach(product => {
+            if (product.getAttribute('data-status') === status) {
+                product.style.display = 'flex';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -20,10 +20,16 @@ class MultipleImageField(forms.ImageField):
 
 class ProductForm(forms.ModelForm):
     images = MultipleImageField(required=False)
+    delete_images = forms.ModelMultipleChoiceField(
+        queryset=ProductImage.objects.none(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Delete Images"
+    )
 
     class Meta:
         model = Product
-        fields = ['title', 'brand', 'description', 'price', 'category', 'images', 'country', 'region', 'city']
+        fields = ['title', 'brand', 'description', 'price', 'category', 'country', 'region', 'city']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
@@ -33,12 +39,11 @@ class ProductForm(forms.ModelForm):
             'region': forms.Select(attrs={'class': 'form-control', 'id': 'region_id'}),
             'city': forms.Select(attrs={'class': 'form-control'}),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        self.fields['category'].queryset = Category.objects.all()
 
+        self.fields['category'].queryset = Category.objects.all()
         self.fields['city'].queryset = City.objects.none()
 
         if 'region' in self.data:
@@ -50,6 +55,9 @@ class ProductForm(forms.ModelForm):
         elif self.instance.pk and self.instance.region:
             self.fields['city'].queryset = City.objects.filter(region=self.instance.region).order_by('name')
 
+        if self.instance.pk:
+            self.fields['delete_images'].queryset = self.instance.images.all()
+
 
 class MessageForm(forms.ModelForm):
     class Meta:
@@ -58,4 +66,3 @@ class MessageForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'class': 'form-control'})
         }
-
