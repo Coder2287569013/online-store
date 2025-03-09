@@ -8,14 +8,15 @@ from .models import Product, ProductImage, Category, ChatRoom, SavedProduct
 from auth_sys.models import Review
 from django.db import models
 from cities_light.models import City
-from django.views.generic import CreateView, DetailView, ListView, TemplateView, DeleteView
+from django.views.generic import CreateView, DetailView, ListView, TemplateView, DeleteView, UpdateView
 from .mixins import UserIsOwnerMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
+import json
 
 class MainView(TemplateView):
-    template_name = 'base.html'
+    template_name = 'main.html'
 
 # Create your views here.
 class ProductCreateView(CreateView):
@@ -32,6 +33,34 @@ class ProductCreateView(CreateView):
         for image in images:
             ProductImage.objects.create(product=self.object, image=image)
         
+        return response
+
+
+class ProductUpdateView(UserIsOwnerMixin, UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'store_content/product_create.html'
+    success_url = reverse_lazy('main')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product'] = self.object
+        context['image_urls'] = [img.image.url for img in self.object.images.all()]
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        # Handle deleted images
+        images_to_delete = form.cleaned_data['delete_images']
+        for image in images_to_delete:
+            image.delete()
+
+        # Handle new uploaded images
+        if form.cleaned_data['images']:
+            for img in form.cleaned_data['images']:
+                ProductImage.objects.create(product=self.object, image=img)
+
         return response
 
 
@@ -55,9 +84,15 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
         reviews = Review.objects.filter(user=context['product'].seller).values_list('rate', flat=True)
         rating = round(sum(reviews) / len(reviews), 1) if reviews else 0
         context['rating'] = rating
+
+        image_urls = [image.image.url for image in context['product'].images.all()]
+        print(image_urls)
+        context['image_urls'] = json.dumps(image_urls) 
+
         return context
 
 
@@ -65,6 +100,7 @@ class ProductSearchListView(ListView):
     model = Product
     template_name = 'store_content/search_results.html'
     context_object_name = 'products'
+    paginate_by = 15
 
     def get_queryset(self):
         query = self.request.GET.get('q').strip()
@@ -89,6 +125,8 @@ class ProductSearchListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
+        context["categories"] = Category.objects.all()
+        context["saved"] = set(SavedProduct.objects.filter(user=self.request.user).values_list("product_id", flat=True))
         return context
 
 
@@ -139,7 +177,27 @@ class SavedProductsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return SavedProduct.objects.filter(user=self.request.user)
-    
+
+
+class ProductsListView(ListView):
+    model = Product
+    template_name = 'store_content/product_list.html'
+    context_object_name = 'products'
+    paginate_by = 15
+
+    def get_queryset(self):
+        category_id = self.kwargs.get("category_id")
+        if category_id:
+            return Product.objects.filter(category_id=category_id, unavailable=False)
+        return Product.objects.filter(unavailable=False)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        context["selected_category"] = self.kwargs.get("category_id")
+        context["saved"] = set(SavedProduct.objects.filter(user=self.request.user).values_list("product_id", flat=True))
+        return context
+
 
 
     
@@ -170,7 +228,6 @@ def search_suggestions(request):
 
     relevant_categories = categories.distinct()
           
-    categories = Category.objects.all()
     for category in relevant_categories:
         suggestions.append({
             'text': f'Search for {query} in {category.name}',
@@ -186,9 +243,10 @@ def search_suggestions(request):
 @login_required
 def save_product(request, pk):
     product = get_object_or_404(Product, id=pk)
-    SavedProduct.objects.create(
-        product = product,
-        user = request.user
-    )
+    saved_product = SavedProduct.objects.filter(product=product, user=request.user)
 
-    return redirect('product_view', pk)
+    if saved_product.exists():
+        saved_product.delete()
+    else:
+        SavedProduct.objects.create(product=product, user=request.user)
+    return redirect(request.META.get("HTTP_REFERER", "all_products")) 

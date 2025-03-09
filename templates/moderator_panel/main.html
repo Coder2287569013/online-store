@@ -1,20 +1,40 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     <title>Moderator Panel</title>
+    <link rel="stylesheet" href="{% static 'regular/css/userProducts.css' %}">
 {% endblock %}
 
 {% block content %}
-    <h2>Moderator Panel</h2>
-
-    <h3>Reports</h3>
-    <ul>
+<h2>Moderator Panel</h2>
+<div class="content">
+    <div class="product-list" id="product-list">
         {% for product in products %}
-            <li>
-                <a href="{% url 'product_view' product.id %}">{{ product.title }}, {{ product.price }}, {{ product.city }}</a>
-                <a href="{% url 'product_checked' product.id %}">Make product available</a>
-                <a href="{% url 'product_delete' product.id %}">Delete product</a>
-            </li>
+            <div class="product-card" data-status="{% if product.unavailable %}unavailable{% else %}available{% endif %}">
+                <a href="{% url 'product_view' product.id %}" class="product-card-link">
+                    <div class="product-image-container">
+                        {% with product.images.all|first as first_image %}
+                            {% if first_image %}
+                                <img src="{{ first_image.image.url }}" alt="{{ product.title }}" class="product-image">
+                            {% else %}
+                                <img src="default-image.jpg" alt="No Image" class="product-image">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">{{ product.title }}</div>
+                        <div class="product-location">{{ product.city }}</div>
+                        <div class="product-price">{{ product.price }} CAD</div>
+                    </div>
+                </a>
+                <div class="product-actions">
+                    <a href="{% url 'product_checked' product.id %}">✅</a>
+                    <a href="{% url 'change_request' product.id %}">⚠️</a>
+                    <a href="{% url 'product_delete' product.id %}">❌</a>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+</div>
 {% endblock %}

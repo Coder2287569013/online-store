@@ -1,0 +1,67 @@
+body {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+form {
+    background-color: #0e0f0f;
+    padding: 20px;
+    max-width: 600px;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+  
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 95%;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    padding: 10px;
+    background-color: #151618;
+    color: white;
+}
+
+form>button {
+    margin-top: 20px;
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-decoration: none;
+    text-align: center;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+form>button:hover {
+    background-color: white;
+    color: black;
+}
+
+form>a {
+    color: white;
+    margin-bottom: 10px;
+}
+
+form>h2 {
+    text-align: center;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}

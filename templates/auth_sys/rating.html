@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Rating - {{ user.username }}</title>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'regular/css/rating.css' %}">
+
+<div class="rating-container">
+    <span class="rating-star" style="font-size: 50px;">&#9733;</span>
+    <div class="rating-value">{{ rating }}</div>
+    <div class="rating-text">Rating Rate</div>
+</div>
+
+<div class="reviews-container">
+    <h2>Reviews</h2>
+    {% for review in reviews %}
+        <div class="review-item">
+            <div class="review-header">
+                <span class="rating-star" style="font-size: 30px;">&#9733; {{ review.rate }}</span>
+                <span class="review-date">{{ review.date|date:"Y/m/d H:i" }}</span>
+            </div>
+            <div class="review-text">{{ review.text }}</div>
+        </div>
+    {% empty %}
+        <p>No reviews yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,15 +1,36 @@
-{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}
-<title>Log in</title>
+<title>Log In</title>
+<link rel="stylesheet" href="{% static 'regular/css/form.css' %}">
+<link rel="stylesheet" href="{% static 'regular/css/mainPage.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>Log In</h2>
-<form method="post">
+<div id="background-text" style="transform: translate(-50%, -70%);">
+    <div id="main-text">SIMPLESTOCK</div>
+    <div id="sub-text">FIND ANYTHING YOU NEED</div>
+</div>
+<form method="post" style="width: 400px;">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="Submit">Log in</button>
+    <a href="{% url 'signup' %}">Do not have an account?</a>
+    <button type="Submit">Log In</button>
 </form>
+<script>
+    let moveX = 0, moveY = 0;
+
+    document.addEventListener("mousemove", (e) => {
+        let { innerWidth, innerHeight } = window;
+        moveX = (e.clientX / innerWidth) * 25;
+        moveY = (e.clientY / innerHeight) * 25;
+    });
+
+    function updateBackground() {
+        document.body.style.backgroundPosition = `${38 + moveX}% ${15 + moveY}%`;
+        requestAnimationFrame(updateBackground);
+    }
+
+    updateBackground();
+</script>
 {% endblock %}

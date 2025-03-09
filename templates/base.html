@@ -7,15 +7,36 @@
     {% block title %}
     <title></title>
     {% endblock %}
+    <link rel="stylesheet" href="{% static 'regular/css/main.css' %}">
+    <script src="{% static 'regular/js/customer_menu.js' %}"></script>
 </head>
 <body>
-    <form action="{% url 'search' %}" method="get" id="search-form">
-        <input type="text" name="q" id="search-input" placeholder="Search for products...">
-        <button type="submit">Search</button>
-    </form>
-    <div id="suggestions"></div>
-
-    <script src="{% static 'regular/js/searchEngine.js' %}"></script>
+    <nav>
+        <ul class="navbar">
+            <div class="title">SIMPLESTOCK</div>
+            <li><a href="{% url 'main' %}">Home</a></li>
+            <li><a href="{% url 'all_products' %}">Products</a></li>
+            <li><a href="{% url 'saved_products' %}">Saved</a></li>
+        </ul>
+        <button class="burger" onclick="toggleMenu()">☰</button>
+    </nav>
+    <div class="offcanvas-menu" id="offcanvasMenu" onclick="navbarDisable()">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'customize_profile' request.user.id %}">Profile</a>
+        <a href="{% url 'rating' request.user.id %}">Rating</a>
+        <a href="{% url 'products-user' request.user.id %}">My Products</a>
+        <a href="{% url 'user_chats' request.user.id %}">My Chats</a>
+        <a href="{% url 'user_crequests' request.user.id %}">Change Requests</a>
+        <a href="{% url 'product_create' %}">Create a product</a>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+    </div>
     {% block content %}
     {% endblock %}
 </body>

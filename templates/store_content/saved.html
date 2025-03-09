@@ -3,12 +3,43 @@
 
 {% block title %}
 <title>Saved Products</title>
+<link rel="stylesheet" href="{% static 'regular/css/productList.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>Saved Products</h2>
-{% for product in saved %}
-    <a href="{% url 'product_view' product.product.id %}">{{ product.product.title }}, {{ product.product.price }}, {{ product.product.region }}</a>
-    <br>
-{% endfor %}
+<div class="content" style="
+left: 0;
+width: 95%; 
+margin: auto;
+padding: 20px;
+overflow-y: auto;
+overflow-x: hidden;">
+    <h2>Saved Products</h2>
+    {% for product in saved %}
+        <div class="product-card">
+            <a href="{% url 'product_view' product.product.id %}" class="product-card-link">
+                <div class="product-image-container">
+                    {% with product.product.images.all|first as first_image %}
+                        {% if first_image %}
+                            <img src="{{ first_image.image.url }}" alt="{{ product.title }}" class="product-image">
+                        {% else %}
+                            <img src="default-image.jpg" alt="No Image" class="product-image">
+                        {% endif %}
+                    {% endwith %}
+                </div>
+        
+                <div class="product-info">
+                    <div class="product-title">{{ product.product.title }}</div>
+                    <div class="product-location">{{ product.product.city }}</div>
+                    <div class="product-price">{{ product.product.price }} CAD</div>
+                </div>
+            </a>
+            <a href="{% url 'save_product' product.product.id %}" class="save-button">
+                ❤️
+            </a>
+        </div>
+    {% empty %}
+        <p>No products found in this category.</p>
+    {% endfor %}
+</div>
 {% endblock %}

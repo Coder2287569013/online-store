@@ -2,26 +2,98 @@
 {% load static %}
 
 {% block title %}
-<title>Product Details</title>
+<title>{{ product.title }} - Product Details</title>
+<link rel="stylesheet" href="{% static 'regular/css/productView.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 {% endblock %}
 
 {% block content %}
-<h2>{{ product.title }}</h2>
-<p style="display: inline-block;">
-    <img src="{{ product.seller.avatar.url }}" alt="{{ product.seller.username }}" width="64px" height="64px">
-    {{ product.seller.username }}
-</p>
-<p>{{ product.description }}</p>
-<p>Price: {{ product.price }}</p>
-<p>{{ product.country.name }}, {{ product.region.name }}, {{ product.city.name }}</p>
-<p>Rating: {{rating}}</p>
-<a href="{% url 'review' product.seller.id product.id %}">Create Review</a>
-{% if request.user and product.seller and request.user != product.seller %}
-    <a href="{% url 'chat' product.id request.user.id %}">Start the chat with the seller</a>
-{% endif %}
-<a href="{% url 'save_product' product.id %}">Add Product to Saved</a>
+<div class="product-container">
+    <div class="product-images" data-images='{{ image_urls|safe }}'>
+        <button class="arrow left" onclick="prevImage()">&#10094;</button>
+        <img id="main-image" src="{{ product.images.first.image.url }}" alt="{{ product.title }}">
+        <button class="arrow right" onclick="nextImage()">&#10095;</button>
+    </div>
 
-{% for image in product.images.all %}
-    <img src="{{ image.image.url }}" alt="{{ product.title }}">
-{% endfor %}
+    <div class="product-details">
+        <div class="product-info">
+            <h1>{{ product.title }}</h1>
+            <p class="price">{{ product.price }} CAD</p>
+            <p style="font-size: 16px;">{{ product.description }}</p>
+            {% if request.user != product.seller %}
+                <a href="{% url 'chat' product.id request.user.id %}" class="chat-button">Chat with Seller</a>
+            {% endif %}
+        </div>
+        
+        <div class="seller-info">
+            <img src="{{ product.seller.avatar.url }}" alt="{{ product.seller.username }}" class="seller-avatar">
+            <div>
+                <p class="seller-name">{{ product.seller.username }}</p>
+                <p class="seller-rating">Rating: &#9733;{{ rating }}/5</p>
+                <p class="seller-joined">Joined: {{ product.seller.date_joined|date:"F Y" }}</p>
+                {% if request.user != product.seller %}
+                <a href="{% url 'review' product.seller.id product.id %}" class="chat-button">Make a review</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="product-location">
+            <div id="map" style="height: 350px;" 
+                 data-latitude="{{ product.city.latitude }}" 
+                 data-longitude="{{ product.city.longitude }}">
+            </div> 
+            <p class="location-text">{{ product.city }}</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let imagesContainer = document.querySelector(".product-images");
+        let mainImage = document.getElementById("main-image");
+
+        if (!imagesContainer || !mainImage) {
+            console.error("Images container or main image not found.");
+            return;
+        }
+
+        let images = JSON.parse(imagesContainer.getAttribute("data-images") || "[]");
+
+        let index = 0;
+
+        function updateImage() {
+            mainImage.src = images[index];
+        }
+
+        window.prevImage = function () {
+            index = (index - 1 + images.length) % images.length;
+            updateImage();
+        };
+
+        window.nextImage = function () {
+            index = (index + 1) % images.length;
+            updateImage();
+        };
+
+        var mapContainer = document.getElementById("map");
+        var latitude = parseFloat(mapContainer.getAttribute("data-latitude"));
+        var longitude = parseFloat(mapContainer.getAttribute("data-longitude"));
+
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+            let map = L.map('map').setView([latitude, longitude], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            L.marker([latitude, longitude]).addTo(map)
+                .bindPopup("<b>{{ product.city }}</b><br>{{ product.country }}")
+                .openPopup();
+        } else {
+            console.error("Invalid coordinates for this product.");
+        }
+    });
+</script>
+
 {% endblock %}
