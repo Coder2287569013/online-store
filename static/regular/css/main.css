@@ -101,8 +101,7 @@ nav .navbar li a:hover {
     z-index: 1000;
 }
 
-.offcanvas-menu a,
-.offcanvas-menu button {
+.offcanvas-menu a {
     color: #FFFFFF;
     padding: 15px 20px;
     text-decoration: none;
@@ -113,13 +112,28 @@ nav .navbar li a:hover {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+.offcanvas-menu a:hover {
+    background-color: rgb(40,40,40);
+}
 
-.offcanvas-menu button {
+.offcanvas-menu form {
+    margin: 0;
+    padding: 0;
+    display: contents; 
+}
+
+.offcanvas-menu form>button {
+    all: unset;
+    color: #FFFFFF;
+    padding: 15px 20px;
+    font-size: 18px;
+    text-align: left;
+    cursor: pointer;
     width: 100%;
     display: block;
 }
-.offcanvas-menu a:hover,
-.offcanvas-menu button:hover {
+
+.offcanvas-menu form>button:hover {
     background-color: rgb(40,40,40);
 }
 
